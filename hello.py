@@ -55,6 +55,15 @@ print(f'not b: {not b}')
 print(f'a and b: {a and b}')
 print(f'a or b: {a or b}')
 
+x = 10
+y = np.sqrt(100)
+print(x == y) # True apenas se os dois valores forem iguais
+print(x > y) # True se x é estritamente maior que y
+print(x >= y) # True se x é maior ou igual a y
+print(x < y)
+print(x <= y)
+print(x != y)
+
 # %% control flow tools
 # if statement
 a = False

@@ -2,6 +2,15 @@
 
 Notas, materiais e scripts da disciplina EP063 - Planejamento do Arranjo Físico.
 
+## 03 de junho de 2025
+
+### **Tarefa**
+
+Encontrar o layout ótimo (minimizar custos totais) do exemplo visto em sala de aula.
+Pode utilizar o que desenvolvemos no [funcional.py](funcional.py) como base.
+
+- [git](https://git-scm.com) - software para controle de versões, o github utiliza esse sistema.
+
 ## 13 de maio de 2025 - links
 
 Em destaque, minhas recomendações pessoais
