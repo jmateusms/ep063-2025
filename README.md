@@ -7,6 +7,7 @@ Notas, materiais e scripts da disciplina EP063 - Planejamento do Arranjo Físico
 ### **Tarefa**
 
 Encontrar o layout ótimo (minimizar custos totais) do exemplo visto em sala de aula.
+Alternativamente, encontrar uma boa solução (mesmo que não seja ótima), usando algum método sistemático.
 Pode utilizar o que desenvolvemos no [funcional.py](funcional.py) como base.
 
 - [git](https://git-scm.com) - software para controle de versões, o github utiliza esse sistema.
