@@ -17,7 +17,9 @@ n = 3 # "colunas"
 l = 10 # largura ("altura da linha")
 c = 5 # comprimento ("largura da coluna")
 
-custos = pd.read_csv('dados/custos.csv', index_col=0)
+custos = pd.read_csv('dados/custos.csv', header=0, index_col=0)
+movimentacoes = pd.read_csv('dados/movimentacoes.csv', header=0, index_col=0)
+custos_diarios = custos * movimentacoes
 
 # %% funcoes
 # listar enderecos
@@ -155,19 +157,39 @@ def get_df_dir(layout, l=l, c=c):
 # print(df_ind.sum().sum())
 # print(df_dir.sum().sum())
 
+def calcular_mov_ind(layout, mov=movimentacoes, l=l, c=c):
+    result = (mov * get_df_ind(layout, l, c)).sum().sum()
+    return result
+
+def calcular_mov_dir(layout, mov=movimentacoes, l=l, c=c):
+    result = (mov * get_df_dir(layout, l, c)).sum().sum()
+    return result
+
+def calcular_custos_ind(layout, custos=custos_diarios, l=l, c=c):
+    result = (custos * get_df_ind(layout, l, c)).sum().sum()
+    return result
+
+def calcular_custos_dir(layout, custos=custos_diarios, l=l, c=c):
+    result = (custos * get_df_dir(layout, l, c)).sum().sum()
+    return result
+
 # %% testar layouts
 layout = np.array([
     ['A', 'B', 'C'],
     ['D', 'E', 'F'],
 ])
 
-print('##### Custos totais ####')
+print('##### Custos totais diários ####')
 
 print('### Layout 1 ###')
-c1 = (custos * get_df_ind(layout)).sum().sum()
-c2 = (custos * get_df_dir(layout)).sum().sum()
-print('distância indireta:', round(c1, 2), sep='\n')
-print('distância direta:', round(c2, 2), sep='\n')
+c1 = calcular_custos_ind(layout, custos_diarios)
+d1 = calcular_mov_ind(layout, movimentacoes)
+c2 = calcular_custos_dir(layout, custos_diarios)
+d2 = calcular_mov_dir(layout, movimentacoes)
+print('medida indireta:')
+print(f'distancia diária: {d1:.2f}, custo diário: {c1:.2f}')
+print('medida direta:')
+print(f'distancia diária: {d2:.2f}, custo diário: {c2:.2f}')
 print('')
 
 layout = np.array([
@@ -176,10 +198,14 @@ layout = np.array([
 ])
 
 print('### Layout 2 ###')
-c1 = (custos * get_df_ind(layout)).sum().sum()
-c2 = (custos * get_df_dir(layout)).sum().sum()
-print('distância indireta:', round(c1, 2), sep='\n')
-print('distância direta:', round(c2, 2), sep='\n')
+c1 = calcular_custos_ind(layout, custos_diarios)
+d1 = calcular_mov_ind(layout, movimentacoes)
+c2 = calcular_custos_dir(layout, custos_diarios)
+d2 = calcular_mov_dir(layout, movimentacoes)
+print('medida indireta:')
+print(f'distancia diária: {d1:.2f}, custo diário: {c1:.2f}')
+print('medida direta:')
+print(f'distancia diária: {d2:.2f}, custo diário: {c2:.2f}')
 print('')
 
 layout = np.array([
@@ -187,8 +213,13 @@ layout = np.array([
     ['D', 'B', 'A'],
 ])
 
-print('### Layout 1 ###')
-c1 = (custos * get_df_ind(layout)).sum().sum()
-c2 = (custos * get_df_dir(layout)).sum().sum()
-print('distância indireta:', round(c1, 2), sep='\n')
-print('distância direta:', round(c2, 2), sep='\n')
+print('### Layout 3 ###')
+c1 = calcular_custos_ind(layout, custos_diarios)
+d1 = calcular_mov_ind(layout, movimentacoes)
+c2 = calcular_custos_dir(layout, custos_diarios)
+d2 = calcular_mov_dir(layout, movimentacoes)
+print('medida indireta:')
+print(f'distancia diária: {d1:.2f}, custo diário: {c1:.2f}')
+print('medida direta:')
+print(f'distancia diária: {d2:.2f}, custo diário: {c2:.2f}')
+print('')
