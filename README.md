@@ -2,6 +2,10 @@
 
 Notas, materiais e scripts da disciplina EP063 - Planejamento do Arranjo Físico.
 
+## 10 de junho de 2025
+
+Usar o script [funcional.py](funcional.py) como base para resolver o problema do exemplo 2. Em vez de otimizar exaustivamente, propor algum método que encontre uma boa solução em um tempo mais curto.
+
 ## 03 de junho de 2025
 
 ### **Tarefa**
