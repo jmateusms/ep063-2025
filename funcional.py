@@ -1,7 +1,7 @@
 # %%
 import numpy as np
 import pandas as pd
-from itertools import combinations
+from itertools import combinations, permutations
 
 # %% dados
 layout = [
@@ -9,13 +9,17 @@ layout = [
     ['D', 'E', 'F'],
 ]
 layout = np.array(layout)
-setores = layout.flatten()
-pares = list(combinations(setores, 2)) # cuidado
-
-m = 2 # "linhas"
-n = 3 # "colunas"
+# m = "linhas"
+# n = "colunas"
+m, n = layout.shape
 l = 10 # largura ("altura da linha")
 c = 5 # comprimento ("largura da coluna")
+
+setores = layout.flatten()
+pares = list(combinations(setores, 2)) # cuidado
+# permutacoes = list(permutations(setores)) # MUITO CUIDADO - custo computacional (memória)
+# obs: cada item da lista acima será uma tuple 1d -> transformar em array e fazer reshape
+permutacoes = [np.array(l).reshape((m, n)) for l in permutations(setores)]
 
 custos = pd.read_csv('dados/custos.csv', header=0, index_col=0)
 movimentacoes = pd.read_csv('dados/movimentacoes.csv', header=0, index_col=0)
@@ -207,53 +211,37 @@ def custos_totais_dir(layout, custos=custos_diarios, l=l, c=c):
 
     return result
 
-# %% testar layouts
-layout = np.array([
-    ['A', 'B', 'C'],
-    ['D', 'E', 'F'],
-])
+# %% otimizar
+# ATENÇÃO - o trecho abaixo pode ser muito custoso - solução exaustiva
+menor_custo_ind = np.inf
+menor_custo_dir = np.inf
+melhor_layout_ind = []
+melhor_layout_dir = []
 
-print('##### Custos totais diários ####')
+tol = 1e-5
 
-print('### Layout 1 ###')
-c1 = custos_totais_ind(layout, custos_diarios)
-d1 = dist_total_ind(layout, movimentacoes)
-c2 = custos_totais_dir(layout, custos_diarios)
-d2 = dist_total_dir(layout, movimentacoes)
-print('medida indireta:')
-print(f'distancia diária: {d1:.2f}, custo diário: {c1:.2f}')
-print('medida direta:')
-print(f'distancia diária: {d2:.2f}, custo diário: {c2:.2f}')
+for layout in permutacoes:
+    # layout = np.array(layout).reshape((m, n))
+    custo_temp = custos_totais_ind(layout)
+    if custo_temp < menor_custo_ind:
+        menor_custo_ind = custo_temp
+        melhor_layout_ind = [layout]
+    elif abs(custo_temp - menor_custo_ind) < tol:
+        melhor_layout_ind.append(layout)
+    
+    custo_temp = custos_totais_dir(layout)
+    if custo_temp < menor_custo_dir:
+        menor_custo_dir = custo_temp
+        melhor_layout_dir = [layout]
+    elif abs(custo_temp - menor_custo_dir) < tol:
+        melhor_layout_dir.append(layout)
+
+print('Melhor layout (distâncias indiretas):')
+for l in melhor_layout_ind:
+    print(l)
+print('Custos totais:', menor_custo_ind)
 print('')
-
-layout = np.array([
-    ['A', 'B', 'E'],
-    ['F', 'C', 'D'],
-])
-
-print('### Layout 2 ###')
-c1 = custos_totais_ind(layout, custos_diarios)
-d1 = dist_total_ind(layout, movimentacoes)
-c2 = custos_totais_dir(layout, custos_diarios)
-d2 = dist_total_dir(layout, movimentacoes)
-print('medida indireta:')
-print(f'distancia diária: {d1:.2f}, custo diário: {c1:.2f}')
-print('medida direta:')
-print(f'distancia diária: {d2:.2f}, custo diário: {c2:.2f}')
-print('')
-
-layout = np.array([
-    ['F', 'E', 'C'],
-    ['D', 'B', 'A'],
-])
-
-print('### Layout 3 ###')
-c1 = custos_totais_ind(layout, custos_diarios)
-d1 = dist_total_ind(layout, movimentacoes)
-c2 = custos_totais_dir(layout, custos_diarios)
-d2 = dist_total_dir(layout, movimentacoes)
-print('medida indireta:')
-print(f'distancia diária: {d1:.2f}, custo diário: {c1:.2f}')
-print('medida direta:')
-print(f'distancia diária: {d2:.2f}, custo diário: {c2:.2f}')
-print('')
+print('Melhor layout (distâncias diretas):')
+for l in melhor_layout_dir:
+    print(l)
+print('Custos totais:', menor_custo_dir)
