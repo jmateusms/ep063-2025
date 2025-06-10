@@ -204,4 +204,18 @@ plt.hist(y, bins=bins, color='blue', alpha=.5, label='Y', density=True)
 plt.legend()
 plt.show()
 
-# %%
+# %% pandas
+# %% importar csv
+custos = pd.read_csv('dados/custos.csv', header=0, index_col=0)
+custos
+
+# %% importar excel
+custos = pd.read_excel('dados/custos.xlsx', header=0, index_col=0)
+custos
+
+# %% acessar valores
+print(custos.iloc[1, 2])
+print(custos.loc['B', 'C'])
+
+# %% salvar
+custos.to_csv('dados/custos_copia.csv')
