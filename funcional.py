@@ -108,30 +108,16 @@ def dist_dir(s1, s2, layout=layout, l=l, c=c):
 # print(f'dist_ind: {dist_ind(s1, s2):.2f}')
 # print(f'dist_dir: {dist_dir(s1, s2):.2f}')
 
-# %% distancia total
-l = 7
-c = 5
-def dist_total_ind(layout, l=l, c=c, pares=pares):
-    result = 0
-
-    for par in pares:
-        result = result + dist_ind(par[0], par[1], layout=layout, l=l, c=c)
-    
-    return result
-
-def dist_total_dir(layout, l=l, c=c, pares=pares):
-    result = 0
-
-    for par in pares:
-        result = result + dist_dir(par[0], par[1], layout=layout, l=l, c=c)
-    
-    return result
-
-# print(dist_total_ind(layout))
-# print(dist_total_dir(layout))
-
-
+# distancia total/custos totais
 def get_df_ind(layout, l=l, c=c):
+    """
+    Retorna um DataFrame contendo as distâncias entre todos os pares de setores de um layout, considerando o layout de entrada e as dimensões informadas. Utiliza medidas indiretas.
+
+    Entradas:
+    - `layout`: array 2d contendo o posicionamento dos setores.
+    - `l`, `c`: dimensões. largura (*"altura da linha") e comprimento (*"largura da coluna")
+    *considerando um formato de matriz.
+    """
     df_ind = pd.DataFrame(np.nan, index=range(len(setores)), columns=range(len(setores)))
     df_ind.index = setores
     df_ind.columns = setores
@@ -142,6 +128,14 @@ def get_df_ind(layout, l=l, c=c):
     return df_ind
 
 def get_df_dir(layout, l=l, c=c):
+    """
+    Retorna um DataFrame contendo as distâncias entre todos os pares de setores de um layout, considerando o layout de entrada e as dimensões informadas. Utiliza medidas diretas.
+
+    Entradas:
+    - `layout`: array 2d contendo o posicionamento dos setores.
+    - `l`, `c`: dimensões. largura (*"altura da linha") e comprimento (*"largura da coluna")
+    *considerando um formato de matriz.
+    """
     df_dir = pd.DataFrame(np.nan, index=range(len(setores)), columns=range(len(setores)))
     df_dir.index = setores
     df_dir.columns = setores
@@ -157,20 +151,60 @@ def get_df_dir(layout, l=l, c=c):
 # print(df_ind.sum().sum())
 # print(df_dir.sum().sum())
 
-def calcular_mov_ind(layout, mov=movimentacoes, l=l, c=c):
+def dist_total_ind(layout, mov=movimentacoes, l=l, c=c):
+    """
+    Retorna a distância indireta total percorrida, considerando o layout informado e o número movimentações entre os pares de setores.
+
+    Entradas:
+    - `layout`: array 2d contendo o posicionamento dos setores.
+    - `mov`: DataFrame com as movimentações entre os pares de setores.
+    - `l`, `c`: dimensões. largura (*"altura da linha") e comprimento (*"largura da coluna")
+    *considerando um formato de matriz.
+    """
     result = (mov * get_df_ind(layout, l, c)).sum().sum()
+
     return result
 
-def calcular_mov_dir(layout, mov=movimentacoes, l=l, c=c):
+def dist_total_dir(layout, mov=movimentacoes, l=l, c=c):
+    """
+    Retorna a distância direta total percorrida, considerando o layout informado e o número movimentações entre os pares de setores.
+
+    Entradas:
+    - `layout`: array 2d contendo o posicionamento dos setores.
+    - `mov`: DataFrame com as movimentações entre os pares de setores.
+    - `l`, `c`: dimensões. largura (*"altura da linha") e comprimento (*"largura da coluna")
+    *considerando um formato de matriz.
+    """
     result = (mov * get_df_dir(layout, l, c)).sum().sum()
+
     return result
 
-def calcular_custos_ind(layout, custos=custos_diarios, l=l, c=c):
+def custos_totais_ind(layout, custos=custos_diarios, l=l, c=c):
+    """
+    Retorna os custos totais, considerando distâncias indiretas, utilizando o layout informado e os custos entre os pares de setores.
+
+    Entradas:
+    - `layout`: array 2d contendo o posicionamento dos setores.
+    - `custos`: DataFrame com os custos entre os pares de setores.
+    - `l`, `c`: dimensões. largura (*"altura da linha") e comprimento (*"largura da coluna")
+    *considerando um formato de matriz.
+    """
     result = (custos * get_df_ind(layout, l, c)).sum().sum()
+
     return result
 
-def calcular_custos_dir(layout, custos=custos_diarios, l=l, c=c):
+def custos_totais_dir(layout, custos=custos_diarios, l=l, c=c):
+    """
+    Retorna os custos totais, considerando distâncias diretas, utilizando o layout informado e os custos entre os pares de setores.
+
+    Entradas:
+    - `layout`: array 2d contendo o posicionamento dos setores.
+    - `custos`: DataFrame com os custos entre os pares de setores.
+    - `l`, `c`: dimensões. largura (*"altura da linha") e comprimento (*"largura da coluna")
+    *considerando um formato de matriz.
+    """
     result = (custos * get_df_dir(layout, l, c)).sum().sum()
+
     return result
 
 # %% testar layouts
@@ -182,10 +216,10 @@ layout = np.array([
 print('##### Custos totais diários ####')
 
 print('### Layout 1 ###')
-c1 = calcular_custos_ind(layout, custos_diarios)
-d1 = calcular_mov_ind(layout, movimentacoes)
-c2 = calcular_custos_dir(layout, custos_diarios)
-d2 = calcular_mov_dir(layout, movimentacoes)
+c1 = custos_totais_ind(layout, custos_diarios)
+d1 = dist_total_ind(layout, movimentacoes)
+c2 = custos_totais_dir(layout, custos_diarios)
+d2 = dist_total_dir(layout, movimentacoes)
 print('medida indireta:')
 print(f'distancia diária: {d1:.2f}, custo diário: {c1:.2f}')
 print('medida direta:')
@@ -198,10 +232,10 @@ layout = np.array([
 ])
 
 print('### Layout 2 ###')
-c1 = calcular_custos_ind(layout, custos_diarios)
-d1 = calcular_mov_ind(layout, movimentacoes)
-c2 = calcular_custos_dir(layout, custos_diarios)
-d2 = calcular_mov_dir(layout, movimentacoes)
+c1 = custos_totais_ind(layout, custos_diarios)
+d1 = dist_total_ind(layout, movimentacoes)
+c2 = custos_totais_dir(layout, custos_diarios)
+d2 = dist_total_dir(layout, movimentacoes)
 print('medida indireta:')
 print(f'distancia diária: {d1:.2f}, custo diário: {c1:.2f}')
 print('medida direta:')
@@ -214,10 +248,10 @@ layout = np.array([
 ])
 
 print('### Layout 3 ###')
-c1 = calcular_custos_ind(layout, custos_diarios)
-d1 = calcular_mov_ind(layout, movimentacoes)
-c2 = calcular_custos_dir(layout, custos_diarios)
-d2 = calcular_mov_dir(layout, movimentacoes)
+c1 = custos_totais_ind(layout, custos_diarios)
+d1 = dist_total_ind(layout, movimentacoes)
+c2 = custos_totais_dir(layout, custos_diarios)
+d2 = dist_total_dir(layout, movimentacoes)
 print('medida indireta:')
 print(f'distancia diária: {d1:.2f}, custo diário: {c1:.2f}')
 print('medida direta:')
