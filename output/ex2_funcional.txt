@@ -1,0 +1,31 @@
+Melhor layout (distâncias indiretas):
+[['A' 'I' 'H']
+ ['F' 'E' 'G']
+ ['D' 'C' 'B']]
+[['B' 'C' 'D']
+ ['G' 'E' 'F']
+ ['H' 'I' 'A']]
+[['D' 'C' 'B']
+ ['F' 'E' 'G']
+ ['A' 'I' 'H']]
+[['H' 'I' 'A']
+ ['G' 'E' 'F']
+ ['B' 'C' 'D']]
+Custos totais: 48280.0
+
+Melhor layout (distâncias diretas):
+[['A' 'I' 'H']
+ ['D' 'F' 'G']
+ ['B' 'C' 'E']]
+[['B' 'C' 'E']
+ ['D' 'F' 'G']
+ ['A' 'I' 'H']]
+[['E' 'C' 'B']
+ ['G' 'F' 'D']
+ ['H' 'I' 'A']]
+[['H' 'I' 'A']
+ ['G' 'F' 'D']
+ ['E' 'C' 'B']]
+Custos totais: 41737.62801101383
+
+Tempo de execução: 599.58908s
