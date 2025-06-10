@@ -1,29 +1,12 @@
 # %%
+import time
 import numpy as np
 import pandas as pd
 from itertools import combinations, permutations
 
 # %% dados
-layout = [
-    ['A', 'B', 'C'],
-    ['D', 'E', 'F'],
-]
-layout = np.array(layout)
-# m = "linhas"
-# n = "colunas"
-m, n = layout.shape
-l = 10 # largura ("altura da linha")
-c = 5 # comprimento ("largura da coluna")
-
-setores = layout.flatten()
-pares = list(combinations(setores, 2)) # cuidado
-# permutacoes = list(permutations(setores)) # MUITO CUIDADO - custo computacional (memória)
-# obs: cada item da lista acima será uma tuple 1d -> transformar em array e fazer reshape
-permutacoes = [np.array(l).reshape((m, n)) for l in permutations(setores)]
-
-custos = pd.read_csv('dados/custos.csv', header=0, index_col=0)
-movimentacoes = pd.read_csv('dados/movimentacoes.csv', header=0, index_col=0)
-custos_diarios = custos * movimentacoes
+from dados.ex1_funcional import *
+# from dados.ex2_funcional import * # demora alguns minutos para otimizar exaustivamente
 
 # %% funcoes
 # listar enderecos
@@ -213,35 +196,42 @@ def custos_totais_dir(layout, custos=custos_diarios, l=l, c=c):
 
 # %% otimizar
 # ATENÇÃO - o trecho abaixo pode ser muito custoso - solução exaustiva
-menor_custo_ind = np.inf
-menor_custo_dir = np.inf
-melhor_layout_ind = []
-melhor_layout_dir = []
+if __name__ == '__main__':
+    menor_custo_ind = np.inf
+    menor_custo_dir = np.inf
+    melhor_layout_ind = []
+    melhor_layout_dir = []
 
-tol = 1e-5
+    tol = 1e-5
 
-for layout in permutacoes:
-    # layout = np.array(layout).reshape((m, n))
-    custo_temp = custos_totais_ind(layout)
-    if custo_temp < menor_custo_ind:
-        menor_custo_ind = custo_temp
-        melhor_layout_ind = [layout]
-    elif abs(custo_temp - menor_custo_ind) < tol:
-        melhor_layout_ind.append(layout)
-    
-    custo_temp = custos_totais_dir(layout)
-    if custo_temp < menor_custo_dir:
-        menor_custo_dir = custo_temp
-        melhor_layout_dir = [layout]
-    elif abs(custo_temp - menor_custo_dir) < tol:
-        melhor_layout_dir.append(layout)
+    start = time.perf_counter()
 
-print('Melhor layout (distâncias indiretas):')
-for l in melhor_layout_ind:
-    print(l)
-print('Custos totais:', menor_custo_ind)
-print('')
-print('Melhor layout (distâncias diretas):')
-for l in melhor_layout_dir:
-    print(l)
-print('Custos totais:', menor_custo_dir)
+    for layout in permutacoes:
+        # layout = np.array(layout).reshape((m, n))
+        custo_temp = custos_totais_ind(layout)
+        if custo_temp < menor_custo_ind:
+            menor_custo_ind = custo_temp
+            melhor_layout_ind = [layout]
+        elif abs(custo_temp - menor_custo_ind) < tol:
+            melhor_layout_ind.append(layout)
+        
+        custo_temp = custos_totais_dir(layout)
+        if custo_temp < menor_custo_dir:
+            menor_custo_dir = custo_temp
+            melhor_layout_dir = [layout]
+        elif abs(custo_temp - menor_custo_dir) < tol:
+            melhor_layout_dir.append(layout)
+
+    duration = time.perf_counter() - start
+
+    print('Melhor layout (distâncias indiretas):')
+    for l in melhor_layout_ind:
+        print(l)
+    print('Custos totais:', menor_custo_ind)
+    print('')
+    print('Melhor layout (distâncias diretas):')
+    for l in melhor_layout_dir:
+        print(l)
+    print('Custos totais:', menor_custo_dir)
+
+    print(f'\nTempo de execução: {duration:.5f}s')
