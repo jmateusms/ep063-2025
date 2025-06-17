@@ -2,11 +2,12 @@
 import time
 import numpy as np
 import pandas as pd
+from tqdm import tqdm
 from itertools import combinations, permutations
 
 # %% dados
-from dados.ex1_funcional import *
-# from dados.ex2_funcional import * # demora alguns minutos para otimizar exaustivamente
+# import dados.ex1_funcional as ex
+import dados.ex2_funcional as ex # demora alguns minutos para otimizar exaustivamente
 
 # %% funcoes
 # listar enderecos
@@ -32,7 +33,7 @@ def listar_enderecos(layout):
 
 # print(listar_enderecos(layout))
 
-def endereco(setor, layout=layout):
+def endereco(setor, layout=ex.layout):
     """
     Retorna o endereço (tuple) do setor (string) dentro do layout (array 2d).
     """
@@ -41,7 +42,7 @@ def endereco(setor, layout=layout):
 
     return result
 
-def dist_ind(s1, s2, layout=layout, l=l, c=c):
+def dist_ind(s1, s2, layout=ex.layout, l=ex.l, c=ex.c):
     """
     Calcula a distância indireta entre dois setores.
 
@@ -64,7 +65,7 @@ def dist_ind(s1, s2, layout=layout, l=l, c=c):
 
     return result
 
-def dist_dir(s1, s2, layout=layout, l=l, c=c):
+def dist_dir(s1, s2, layout=ex.layout, l=ex.l, c=ex.c):
     """
     Calcula a distância indireta entre dois setores.
 
@@ -96,7 +97,7 @@ def dist_dir(s1, s2, layout=layout, l=l, c=c):
 # print(f'dist_dir: {dist_dir(s1, s2):.2f}')
 
 # distancia total/custos totais
-def get_df_ind(layout, l=l, c=c):
+def get_df_ind(layout, l=ex.l, c=ex.c):
     """
     Retorna um DataFrame contendo as distâncias entre todos os pares de setores de um layout, considerando o layout de entrada e as dimensões informadas. Utiliza medidas indiretas.
 
@@ -105,16 +106,16 @@ def get_df_ind(layout, l=l, c=c):
     - `l`, `c`: dimensões. largura (*"altura da linha") e comprimento (*"largura da coluna")
     *considerando um formato de matriz.
     """
-    df_ind = pd.DataFrame(np.nan, index=range(len(setores)), columns=range(len(setores)))
-    df_ind.index = setores
-    df_ind.columns = setores
+    df_ind = pd.DataFrame(np.nan, index=range(len(ex.setores)), columns=range(len(ex.setores)))
+    df_ind.index = ex.setores
+    df_ind.columns = ex.setores
 
-    for par in pares:
+    for par in ex.pares:
         df_ind.loc[par[0], par[1]] = dist_ind(par[0], par[1], layout=layout, l=l, c=c)
     
     return df_ind
 
-def get_df_dir(layout, l=l, c=c):
+def get_df_dir(layout, l=ex.l, c=ex.c):
     """
     Retorna um DataFrame contendo as distâncias entre todos os pares de setores de um layout, considerando o layout de entrada e as dimensões informadas. Utiliza medidas diretas.
 
@@ -123,11 +124,11 @@ def get_df_dir(layout, l=l, c=c):
     - `l`, `c`: dimensões. largura (*"altura da linha") e comprimento (*"largura da coluna")
     *considerando um formato de matriz.
     """
-    df_dir = pd.DataFrame(np.nan, index=range(len(setores)), columns=range(len(setores)))
-    df_dir.index = setores
-    df_dir.columns = setores
+    df_dir = pd.DataFrame(np.nan, index=range(len(ex.setores)), columns=range(len(ex.setores)))
+    df_dir.index = ex.setores
+    df_dir.columns = ex.setores
 
-    for par in pares:
+    for par in ex.pares:
         df_dir.loc[par[0], par[1]] = dist_dir(par[0], par[1], layout=layout, l=l, c=c)
     
     return df_dir
@@ -138,7 +139,7 @@ def get_df_dir(layout, l=l, c=c):
 # print(df_ind.sum().sum())
 # print(df_dir.sum().sum())
 
-def dist_total_ind(layout, mov=movimentacoes, l=l, c=c):
+def dist_total_ind(layout, mov=ex.movimentacoes, l=ex.l, c=ex.c):
     """
     Retorna a distância indireta total percorrida, considerando o layout informado e o número movimentações entre os pares de setores.
 
@@ -152,7 +153,7 @@ def dist_total_ind(layout, mov=movimentacoes, l=l, c=c):
 
     return result
 
-def dist_total_dir(layout, mov=movimentacoes, l=l, c=c):
+def dist_total_dir(layout, mov=ex.movimentacoes, l=ex.l, c=ex.c):
     """
     Retorna a distância direta total percorrida, considerando o layout informado e o número movimentações entre os pares de setores.
 
@@ -166,7 +167,7 @@ def dist_total_dir(layout, mov=movimentacoes, l=l, c=c):
 
     return result
 
-def custos_totais_ind(layout, custos=custos_diarios, l=l, c=c):
+def custos_totais_ind(layout, custos=ex.custos_diarios, l=ex.l, c=ex.c):
     """
     Retorna os custos totais, considerando distâncias indiretas, utilizando o layout informado e os custos entre os pares de setores.
 
@@ -180,7 +181,7 @@ def custos_totais_ind(layout, custos=custos_diarios, l=l, c=c):
 
     return result
 
-def custos_totais_dir(layout, custos=custos_diarios, l=l, c=c):
+def custos_totais_dir(layout, custos=ex.custos_diarios, l=ex.l, c=ex.c):
     """
     Retorna os custos totais, considerando distâncias diretas, utilizando o layout informado e os custos entre os pares de setores.
 
@@ -203,10 +204,12 @@ if __name__ == '__main__':
     melhor_layout_dir = []
 
     tol = 1e-5
+    tempo_max_segundos = 600
+    tempo_max_atingido = False
 
     start = time.perf_counter()
 
-    for layout in permutacoes:
+    for layout in tqdm(ex.permutacoes):
         # layout = np.array(layout).reshape((m, n))
         custo_temp = custos_totais_ind(layout)
         if custo_temp < menor_custo_ind:
@@ -221,6 +224,11 @@ if __name__ == '__main__':
             melhor_layout_dir = [layout]
         elif abs(custo_temp - menor_custo_dir) < tol:
             melhor_layout_dir.append(layout)
+        
+        tempo_atual = time.perf_counter() - start
+        if tempo_atual > 300:
+            tempo_max_atingido = True
+            break
 
     duration = time.perf_counter() - start
 
@@ -235,3 +243,5 @@ if __name__ == '__main__':
     print('Custos totais:', menor_custo_dir)
 
     print(f'\nTempo de execução: {duration:.5f}s')
+    if tempo_max_atingido:
+        print('Tempo máximo de execução atingido. A solução pode não ser ótima.')

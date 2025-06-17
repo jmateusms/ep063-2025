@@ -15,6 +15,9 @@ m, n = layout.shape
 l = 10 # largura ("altura da linha")
 c = 5 # comprimento ("largura da coluna")
 
+def formatar_layout(l, m=m, n=n):
+    return np.array(l).reshape((m, n))
+
 setores = layout.flatten()
 pares = list(combinations(setores, 2)) # cuidado
 # permutacoes = list(permutations(setores)) # MUITO CUIDADO - custo computacional (memória)
