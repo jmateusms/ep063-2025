@@ -6,8 +6,9 @@ from tqdm import tqdm
 from itertools import combinations, permutations
 
 # %% dados
-# import dados.ex1_funcional as ex
-import dados.ex2_funcional as ex # demora alguns minutos para otimizar exaustivamente
+# import dados.ex1_funcional as ex # layout 2x3, 6 setores
+# import dados.ex2_funcional as ex # layout 3x3, 9 setores – demora alguns minutos para otimizar exaustivamente
+import dados.ex3_funcional as ex # layout 3x4, 12 setores – não é viável otimizar exaustivamente
 
 # %% funcoes
 # listar enderecos

@@ -2,6 +2,19 @@
 
 Notas, materiais e scripts da disciplina EP063 - Planejamento do Arranjo Físico.
 
+## 17 de junho de 2025
+
+### **Tarefa**
+
+Implemente uma solução alternativa do problema de arranjo funcional, que vimos em sala de aula. Pode usar o script [funcional.py](funcional.py) como base, ou propor uma abordagem de construção do script do zero.
+
+Usar a sua implementação da melhoria/otimização do layout funcional para resolver o problema dos exemplos 2 e 3.
+Explique sua solução em um relatório.
+
+No SIGAA, entregue o relatório e o código do script (com todos os arquivos necessários para rodar). Enviar um arquivo .zip com o relatório e o código. Alternativamente, pode ser feito um relatório em .ipynb (Jupyter Notebook) com o código e as explicações. (**Atenção:** garanta que o código rode sem erros do começo ao fim, com todos os componentes necessários no .zip ou .ipynb).
+
+**Entrega até o dia 01 de julho de 2025.**
+
 ## 10 de junho de 2025
 
 Usar o script [funcional.py](funcional.py) como base para resolver o problema do exemplo 2. Em vez de otimizar exaustivamente, propor algum método que encontre uma boa solução em um tempo mais curto.

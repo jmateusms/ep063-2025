@@ -1,4 +1,5 @@
 # %% importar pacotes e dados
+import sys
 import numpy as np
 import time
 from random import shuffle
@@ -31,9 +32,11 @@ if __name__ == '__main__':
     tempo_max_segundos = 5
 
     solucoes_testadas = 0
-    intervalo_progresso = 1000
+    intervalo_progresso = 250
 
-    progress = tqdm(total=tempo_max_segundos, bar_format='{n:.3f}s')
+    # r_bar = '| {n_fmt}/{total_fmt} [{elapsed}<{remaining}, {rate_fmt}{postfix}]'
+
+    progress = tqdm(total=tempo_max_segundos, unit='s', bar_format='{l_bar}{bar}| {n:.2f}/{total_fmt}s [{elapsed}<{remaining}, {rate_fmt}{postfix}]')
 
     start = time.perf_counter()
 
@@ -60,11 +63,15 @@ if __name__ == '__main__':
                 melhor_layout_dir.append(layout)
         
         solucoes_testadas += 1
+        tempo_atual = time.perf_counter() - start
 
         if solucoes_testadas % intervalo_progresso == 0:
-            tempo_atual = time.perf_counter() - start
             progress.update(tempo_atual - tempo_anterior)
             tempo_anterior = tempo_atual
+    
+    else:
+        progress.update(tempo_max_segundos)
+        progress.close()
     
     print('Melhor layout (distâncias indiretas):')
     for l in melhor_layout_ind:
